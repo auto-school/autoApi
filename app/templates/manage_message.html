@@ -1,0 +1,65 @@
+{% extends "navbar.html" %}
+{% block body %}
+
+    {% for message in messages %}
+        {% if message.type == "join" %}
+        <div>
+            <input class="project-id" type="hidden" value="{{ message.project.id }}">
+            <input class="message-id" type="hidden" value="{{ message._id }}" >
+            申请项目名:{{ message.project.name}}<br>
+            申请人:{{ message.applier.name}}<br>
+            <input class="applier-id" type="hidden" value="{{ message.applier.id }}" >
+            <input class="applier-name" type="hidden" value="{{ message.applier.name }}" >
+            <input class="apply-role" type="hidden" value="{{ message.apply_role }}">
+            申请职位: <span class="applier-role">{{ message.apply_role}}</span><br>
+            申请理由:{{ message['apply-reason'] }}
+            {% if message.status == 0 %}
+                <button class="btn btn-primary permit">同意</button>
+                <button class="btn btn-danger">拒绝</button>
+                <span class="message-handled" style="display:none">消息已处理</span>
+            {% else %}
+                消息已处理
+            {% endif %}
+        {% endif %}
+      </div>
+    {% else %}
+        您没有消息
+    {% endfor %}
+
+
+<script type=text/javascript>
+
+  $(function() {
+    $('button.permit').bind('click', function() {
+      var btn = $(this)
+      $.getJSON($SCRIPT_ROOT + '/_add_member', {
+        'project-id':$(this).prevAll('input.project-id').val(),
+        'applier-id':$(this).prevAll('input.applier-id').val(),
+        'applier-name':$(this).prevAll('input.applier-name').val(),
+        'apply-role':$(this).prevAll('input.apply-role').val(),
+        'message-id':$(this).prevAll('input.message-id').val()
+      }, function(data) {
+        btn.nextAll('span').show();
+        btn.hide();
+        btn.next('button').hide();
+        btn.prev('buttn').hide();
+      });
+      return false;
+    });
+  });
+
+</script>
+
+
+<script>
+    $(function(){
+        var roles_dict = {
+        'member':'成员',
+        'charge_person':'负责人',
+        'mentor':'导师',
+        'outside_mentor':'校外导师'
+        }
+        $('span.applier-role').text(roles_dict[$('span.applier-role').text()]);
+    });
+</script>
+{% endblock %}

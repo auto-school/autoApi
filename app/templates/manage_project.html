@@ -1,0 +1,40 @@
+{% extends "navbar.html" %}
+{% block body %}
+    <script src="{{ url_for('static', filename='js/project/project_display.js') }}"></script>
+    {% for project in projects %}
+        <div class="col-md-6">
+            <h4 class="list-group-item-heading"> 项目名: {{ project.name }}</h4>
+            <p class="list-group-item-text">创建人:
+                {{ project.creator.name }}
+            </p>
+            <p>项目类型: {%  for type in project.types %}<small class="pro_type">
+                {{ type }}</small> {% endfor %}</p>
+            <p class="list-group-item-text">项目介绍:
+                {{ project.introduction }}
+            <p>项目成员</p>
+
+            <p>负责人</p>
+            {% for charge_person in project.team.charge_person %}
+                <p>{{charge_person.name}}</p>
+            {% endfor %}
+
+            <p>导师</p>
+            {% for mentor in project.team.mentor %}
+                <p>{{mentor.name}}</p>
+            {% endfor %}
+
+            <p>成员</p>
+            {% for member in project.team.member %}
+                <p>{{member.name}}</p>
+            {% endfor %}
+
+            <p>校外导师</p>
+            {% for outside_mentor in project.team.outside_mentor %}
+                <p>{{outside_mentor.name}}</p>
+            {% endfor %}
+
+        </div>
+    {% else %}
+        您还没有项目
+    {% endfor %}
+{% endblock %}

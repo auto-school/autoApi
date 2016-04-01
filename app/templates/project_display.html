@@ -1,0 +1,82 @@
+{% extends "navbar.html" %}
+{% block body %}
+     <link rel="stylesheet" href="{{ url_for('static', filename='css/project/project_display.css') }}">
+     <script src="{{ url_for('static', filename='js/project/project_display.js') }}">
+     </script>
+     <script>
+     </script>
+     <div class="list-group">
+         {% for project in projects %}
+      <a href="#" class="list-group-item">
+            <div class="media col-md-3">
+                <figure class="pull-left">
+                    <img class="media-object img-rounded img-responsive" src="{{ url_for('static', filename='img/pro_pic.jpg') }}" >
+                </figure>
+            </div>
+            <div class="col-md-6">
+                <h4 class="list-group-item-heading"> 项目名: {{ project.name }}</h4>
+                <p class="list-group-item-text">创建人:
+                    {{ project.creator.name }}
+                </p>
+                <p>项目类型: {%  for type in project.types %}<small class="pro_type">
+                    {{ type }}</small> {% endfor %}</p>
+                <p class="list-group-item-text">项目介绍:
+                    {{ project.introduction }}
+                </p>
+                <p class="list-group-item-text">项目基础:
+                    {{ project.basic }}
+                </p>
+                <p class="list-group-item-text">成员要求:
+                    {{ project.basic }}
+                </p>
+            </div>
+            <div class="col-md-3 text-center">
+                <h2 class="status-{{project.status}}"> 项目开放中 </h2>
+                <label class="project-id" style="display:none">{{project._id}}</label>
+                <button type="button" class="btn btn-success btn-lg btn-block attend-project">申请加入</button>
+                <div class="member-status">
+                    <span class="current-persons">{{cal_member(project.team)}}</span> / <span class="max-persons">{{project.member_number}}</span>
+                </div>
+                <p> {{project.deadline}}</p>
+            </div>
+      </a>
+      {% endfor %}
+     </div>
+
+        <div class="modal attend-project" id="myModal">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                  <h4 class="modal-title">申请加入项目</h4>
+                </div><div class="container"></div>
+                <div class="modal-body">
+                    <form role="form" action="{{ url_for('join_project') }}" method="post">
+                        <input type="hidden" id="applied-project" name="project-id">
+                        <input type="hidden" name="username" value="{{session.username}}" >
+                    <br style="clear:both">
+                        <div class="form-group">
+                            <label class="control-label">你的姓名</label>
+                            <input type="text" class="form-control" name="applier-name" placeholder="你的姓名" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">你希望在项目中担当?</label>
+                            <select class="form-control" style="width:100px" name="apply-role">
+                                <option value="0" selected>负责人</option>
+                                <option value="1">成员</option>
+                                <option value="2">导师</option>
+                                <option value="3">校外导师</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label">申请理由</label>
+                            <textarea class="form-control" name="apply-reason" required></textarea>
+                        </div>
+                        <a href="#" data-dismiss="modal" class="btn">取消</a>
+                    <button type="submit" class="btn btn-primary pull-right">确认</button>
+                    </form>
+                </div>
+              </div>
+            </div>
+        </div>
+{% endblock %}
