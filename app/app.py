@@ -36,11 +36,11 @@ def verify_password(username_or_token, password):
 # token resource
 
 
-@app.route('/token', methods=['GET'])
+@app.route('/token', methods=['POST'])
 @auth.login_required
 def get_auth_token():
     token = generate_auth_token(600)
-    return jsonify({'token': token.decode('ascii'), 'duration': 600})
+    return jsonify({'data':{'token': token.decode('ascii'), 'duration': 600}})
 
 
 # projects resource

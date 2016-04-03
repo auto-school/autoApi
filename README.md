@@ -1,78 +1,49 @@
-# 项目招募平台 - 同济济市
+# API 文档
 
-一个让同济师生方便交流项目，促进合作的平台
+### 获取token
 
-## Table of Contents
+	URL
+	
+`/token`
 
-- [Requirements](#requirements)
-- [Framework](#framework)
-- [Get Started](#get-started)
-- [Dependences Installation](#dependences-installation)
-   - [windows](#windows)
-   - [os x](#os-x)
-- [Configuration](#configuration)
-- [Usage](#usage)
+	Method
+	
+POST
 
+	Description
 
+生成一个token
 
-## Requirements
+	URL Params
+	
+##### Required
+http basic auth
 
-- Python 2.* >= 2.7.9
-- Flask >= 0.10.1
+- username
+- password
 
-## Framework
-  - [Flask](http://docs.jinkan.org/docs/flask/)
-  - [Python](https://www.python.org/)
-    
-## Get Started
+-
 
-```shell
-mkdir sse
-cd sse
-git clone https://github.com/tztztztztz/jishi.git
-```
+    Data Params
+	
+None
+	
+	Success Response
+	
+- Status Code: 200 
+- Content-Type: `application/json; charset=utf-8`
+- body example
 
-## Dependences Installation
-
-### windows
-  - [MySQLdb-python install](http://www.codegood.com/archives/129)
-  - [Flask install](http://docs.jinkan.org/docs/flask/installation.html)
-  
-### os x
-  ```shell
-  pip install flask
-  pip install MySQL-python
-  ```
-## Configuration
-`sse/app/module/db/config.json`
 ```json
 {
-  "mysql": {
-    "host":"localhost",
-    "port":"3306",
-    "database":"jishi",
-    "user":"root",
-    "password":""
-  },
-  "mongo": {
-    "host":"localhost",
-    "port":"3306",
-    "database":"test",
-    "user":"root",
-    "password":""
-  },
-  "redis": {
-    "host":"localhost",
-    "port":"3306",
-    "database":"test",
-    "user":"root",
-    "password":""
+  "data": {
+    "duration": 600,
+    "token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTQ1OTY3MzMyNCwiaWF0IjoxNDU5NjcyNzI0fQ.eyJpZCI6NjAwfQ.4VEW6OI1Bi8kusdQ4erISA6vwXiI5Jss665PXOzZX7U"
   }
 }
 ```
-## Usage
 
-```shell
-python run.py
-```
-see your websit at `http://localhost:5000` on your brower
+	Error Response
+	
+- Status Code: 401 UNAUTHORIZED
+
