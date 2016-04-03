@@ -1,9 +1,17 @@
 # API 文档
 
-## 内容
+## 说明
+
+API 设计使用RESTful风格，数据交互格式统一使用json，为保持API的请求是无状态的，不使用session或者cookie，采用http basic auth和token来进行认证
+
+
+
+## API
 
 - [获取token](#api1)
 - [获取projects](#api2)
+- [获取指定用户的projects](#api3)
+- [获取指定用户的message](#api4)
 
 
 <h2 id="api1">获取token</h2>
@@ -23,9 +31,12 @@ POST
 ### URL Params
 	
 - Required
+	- Content-Type `application/json;`
 	- http basic auth
 		  - username
 		  - password
+
+
 		
 ### Data Params
 
@@ -71,6 +82,7 @@ GET
 ### URL Params
 	
 - Required
+	- Content-Type `application/json;`
 	- http basic auth
 		  - username
 		  - password
@@ -104,7 +116,7 @@ None
 
 
 
-<h2 id="api3">根据指定用户的project</h2>
+<h2 id="api3">获得指定用户的project</h2>
 
 ### URL
 	
@@ -121,6 +133,7 @@ GET
 ### URL Params
 	
 - Required
+   - Content-Type `application/json;`
 	- http basic auth
 		  - username
 		  - password
@@ -155,7 +168,7 @@ None
 - Status Code: 405 METHOD NOT ALLOW
 
 
-<h2 id="api4">根据指定用户的message</h2>
+<h2 id="api4">获得指定用户的message</h2>
 
 ### URL
 	
@@ -172,6 +185,7 @@ GET
 ### URL Params
 	
 - Required
+	- Content-Type `application/json;`
 	- http basic auth
 		  - username
 		  - password
