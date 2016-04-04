@@ -6,6 +6,8 @@ from module.project_manager import ProjectManager
 from module.message_manager import MessageManager
 from flask_httpauth import HTTPBasicAuth
 from module.token import verify_auth_token, generate_auth_token, set_token_key
+from datetime import datetime
+import time
 
 
 app = Flask(__name__)
@@ -49,10 +51,27 @@ def get_auth_token():
 @auth.login_required
 def get_projects():
     projects = ProjectManager().find_all_project()
+    print projects
+    for project in projects:
+        project['created_time'] = time.mktime(project['created_time'].timetuple())
+        project['deadline'] = time.mktime(project['deadline'].timetuple())
+        project['_id'] = str(project['_id'])
     data = {'data': projects}
     raw = json_util.dumps(data, ensure_ascii= False, indent=4)
     resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
     return resp
+
+
+@app.route('/project', methods=['POST'])
+@auth.login_required
+def new_project():
+    project = request.json
+    project['deadline'] = datetime.fromtimestamp(project['deadline'] / 1000.0)
+    print project['deadline']
+    project['created_time'] = datetime.now();
+    print project['created_time']
+    ProjectManager().create_project(project)
+    return '213'
 
 
 @app.route('/user/<username>/projects', methods=['GET'])

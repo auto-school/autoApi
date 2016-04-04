@@ -52,3 +52,6 @@ class ProjectManager:
             return None
         return project
 
+    def new_project(self, project):
+        result = self._mongo_conn.insert_project(project)
+
