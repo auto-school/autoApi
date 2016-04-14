@@ -1,6 +1,8 @@
 # coding=utf-8
-from db.factory import MongoFactory, MysqlFactory
-import format
+
+from conn import Connection
+from datetime import datetime
+import time
 
 
 def cal_member(team):
@@ -11,31 +13,20 @@ def cal_member(team):
 
 
 class ProjectManager:
+
     def __init__(self):
-        self._mysql_conn = MysqlFactory().get_connection()
-        self._mongo_conn = MongoFactory().get_connection()
+        self._mongo_conn = Connection()
 
     def create_project(self, project):
+        project['status'] = 0
+        project['deadline'] = datetime.fromtimestamp(project['deadline'])
+        project['created_time'] = datetime.now()
         result = self._mongo_conn.insert_project(project)
         return result
 
-    def apply_project(self, applier_id, project_id):
-        pass
-
-    def approve_applier(self, applier_id, project_id):
-        pass
-
-    def start_project(self, project_id):
-        pass
-
-    def finish_project(self, project_id):
-        pass
-
-    def cancel_project(self, project_id):
-        pass
-
     def find_all_project(self):
         projects = self._mongo_conn.find_all_project()
+        projects = map(convert_project_bson_type,projects)
         return projects
 
     def add_member(self, join_info):
@@ -44,6 +35,7 @@ class ProjectManager:
 
     def find_all_project_by_username(self, username):
         projects = self._mongo_conn.find_all_project_by_username(username)
+        projects = map(convert_project_bson_type,projects)
         return projects
 
     def find_project_by_id(self, project_id):
@@ -55,3 +47,9 @@ class ProjectManager:
     def new_project(self, project):
         result = self._mongo_conn.insert_project(project)
 
+
+def convert_project_bson_type(project):
+    project['created_time'] = time.mktime(project['created_time'].timetuple())
+    project['deadline'] = time.mktime(project['deadline'].timetuple())
+    project['_id'] = str(project['_id'])
+    return project

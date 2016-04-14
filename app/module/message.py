@@ -1,5 +1,5 @@
 from db.factory import MongoFactory
-
+from conn import Connection
 # about message status
 # 0 => active
 # 1 => expire or handled
@@ -7,7 +7,7 @@ from db.factory import MongoFactory
 
 class MessageManager:
     def __init__(self):
-        self._mongo_conn = MongoFactory().get_connection()
+        self._mongo_conn = Connection()
 
     def add_message(self, msg):
         self._mongo_conn.insert_msg(msg)
@@ -19,6 +19,4 @@ class MessageManager:
     def expire_message(self, message_id):
         result = self._mongo_conn.update_message_status(message_id, status=1)
         return result
-
-
 

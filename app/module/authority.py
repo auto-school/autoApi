@@ -1,22 +1,24 @@
-from db.factory import MysqlFactory
+from conn import Connection
 
 
 def valid_login(username, password):
-    conn = MysqlFactory().get_connection()
-    user = conn.find_user_by_username(username)
-    if user_not_exist(user):
+    conn = Connection()
+    users = conn.find_user_by_username(username)
+    if user_not_exist(users):
         return False
-    if equal_password(user, password):
+    if equal_password(users[0], password):
         return True
+    return False
 
 
 def signup(username, password):
-    conn = MysqlFactory().get_connection()
+
+    conn = Connection()
 
     user = conn.find_user_by_username(username)
     if not user_not_exist(user):
         return False
-    result = conn.insert_user(username, password)
+    result = conn.insert_user(dict(username=username, password=password))
     if result:
         return True
     else:
@@ -31,9 +33,5 @@ def user_not_exist(user):
 
 
 def equal_password(user, password):
-    _, user_password = user[0]
-    if user_password == password:
-        return True
-    else:
-        return False
+    return user['password'] == password
 

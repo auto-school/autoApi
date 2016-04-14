@@ -424,22 +424,7 @@ None
 
 ```json
 
-{
-    "status" : 0,
-    "apply_role" : 0,
-    "apply_reason" : "我很擅长汽车相关的研究",
-    "project" : {
-        "name" : "汽车能源研究",
-        "id" : "56fb1fb6c1f2b4030e72dc0a"
-    },
-    "sender" : {
-        "name" : "张嘉琦",
-        "id" : "1352863"
-    },
-    "receiver" : "1352892",
-    "type" : 0,
-    "content" : "张嘉琦想要加入你的项目"
-}
+
 
 ```
 
