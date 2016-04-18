@@ -18,7 +18,12 @@ def signup(username, password):
     user = conn.find_user_by_username(username)
     if not user_not_exist(user):
         return False
-    result = conn.insert_user(dict(username=username, password=password))
+    result = conn.insert_user(dict(username=username,
+                                   password=password,
+                                   professional_skill='',
+                                   contact='',
+                                   practice_experience='',
+                                   edu_experience=''))
     if result:
         return True
     else:

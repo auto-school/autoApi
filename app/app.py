@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from module import authority, project, form
 from bson import json_util
 from module.project import ProjectManager
-from module.message import MessageManager
+from module import message_mgr
 from flask_httpauth import HTTPBasicAuth
 from module.token import verify_auth_token, generate_auth_token, set_token_key
 from module.application import ApplicationManager
@@ -44,6 +44,15 @@ def get_auth_token():
     return jsonify({'data':{'token': token.decode('ascii'), 'duration': 600}})
 
 
+# user resource
+
+@app.route('/user', methods=['POST'])
+def create_user():
+    user = request.json
+    result = authority.signup(user['username'], user['password'])
+    return jsonify({'result': 'success'})
+
+
 # projects resource
 
 @app.route('/projects', methods=['GET'])
@@ -78,7 +87,7 @@ def get_projects_of_user(username):
 @app.route('/user/<username>/messages', methods=['GET'])
 @auth.login_required
 def get_message_of_username(username):
-    messages = MessageManager().find_message_for_receiver(username)
+    messages = message_mgr.find_message_for_receiver(username)
     data = {'data': messages}
     raw = json_util.dumps(data, ensure_ascii= False, indent=4)
     resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
@@ -90,6 +99,7 @@ def get_message_of_username(username):
 def create_application():
     application = request.json
     result = ApplicationManager.insert_application(application)
+    return jsonify({'result': 'success'})
 
 
 @app.route('/')

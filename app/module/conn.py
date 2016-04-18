@@ -62,7 +62,7 @@ class Connection:
         return True
 
     def find_all_messages_for_receiver(self, username):
-        msgs_cursor = self.conn.messages.find({'receiver': username})
+        msgs_cursor = self.conn.messages.find({'receiver.id': username})
         msgs = []
         for msg in msgs_cursor:
             msgs.append(msg)
