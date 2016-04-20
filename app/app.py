@@ -60,7 +60,9 @@ def create_user():
 @app.route('/projects', methods=['GET'])
 @auth.login_required
 def get_projects():
-    projects = ProjectManager().find_all_project()
+    offset = int(request.args.get('offset', 0))
+    limit = int(request.args.get('limit', 2))
+    projects = ProjectManager().find_all_project(offset=offset, limit=limit)
     data = {'data': projects}
     raw = json_util.dumps(data, ensure_ascii= False, indent=4)
     resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
@@ -96,12 +98,15 @@ def get_message_of_username(username):
     return resp
 
 
+# application
+
 @app.route('/application', methods=['POST'])
 @auth.login_required
 def create_application():
     application = request.json
     result = ApplicationManager.insert_application(application)
     return jsonify({'result': 'success'})
+
 
 
 @app.route('/')

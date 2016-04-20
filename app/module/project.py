@@ -24,8 +24,8 @@ class ProjectManager:
         result = self._mongo_conn.insert_project(project)
         return result
 
-    def find_all_project(self):
-        projects = self._mongo_conn.find_all_project()
+    def find_all_project(self, **keyword):
+        projects = self._mongo_conn.find_all_project(**keyword)
         projects = map(convert_project_bson_type,projects)
         return projects
 

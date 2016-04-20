@@ -22,8 +22,12 @@ class Connection:
         self.conn.projects.insert_one(project)
         return True
 
-    def find_all_project(self):
-        return list(self.conn.projects.find().sort([('created_time', pymongo.DESCENDING),]))
+    def find_all_project(self, **keyword):
+        print keyword
+        return list(self.conn.projects.find()
+                    .skip(keyword['offset'])
+                    .limit(keyword['limit'])
+                    .sort([('created_time', pymongo.DESCENDING),]))
 
     def update_member(self, join_info):
 
