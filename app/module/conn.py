@@ -82,8 +82,8 @@ class Connection:
         return True
 
     def insert_application(self, application):
-        result = self.conn.application.insert_one(application)
-        return result
+        _id = self.conn.application.insert_one(application)
+        return _id
 
 
 

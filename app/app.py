@@ -7,10 +7,12 @@ from module import message_mgr
 from flask_httpauth import HTTPBasicAuth
 from module.token import verify_auth_token, generate_auth_token, set_token_key
 from module.application import ApplicationManager
-
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
+CORS(app)
+
 
 # extensions
 

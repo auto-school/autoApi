@@ -19,7 +19,8 @@ class ApplicationManager:
         message['receiver'] = application['project']['creator']
         message['sender'] = application['applier']
         message['type'] = 0
-        message['attachment'] = application
+        project = dict(id=str(result.inserted_id))
+        message['attachment'] = dict(project=project)
         message_mgr.add_message(message)
         return True
 
