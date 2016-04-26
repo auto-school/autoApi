@@ -23,8 +23,11 @@ class Connection:
         return True
 
     def find_all_project(self, **keyword):
-        print keyword
-        return list(self.conn.projects.find()
+        query = {}
+        status = keyword.get('status', None)
+        if status:
+            query['status'] = int(status)
+        return list(self.conn.projects.find(query)
                     .skip(keyword['offset'])
                     .limit(keyword['limit'])
                     .sort([('created_time', pymongo.DESCENDING),]))
@@ -89,5 +92,29 @@ class Connection:
         _id = self.conn.application.insert_one(application)
         return _id
 
+    def find_application_by_id(self, application_id):
+        return list(self.conn.application.find({'_id': ObjectId(application_id)}))[0]
+
+    def update_application_status(self, application_id, status):
+        self.conn.application.update_one(
+                    {'_id':ObjectId(application_id)},
+                    {
+                        '$set': {
+                            "status": status
+                        }
+                    }
+                )
+        return True
+
+    def update_project_status(self, project_id, status):
+        self.conn.projects.update_one(
+                    {'_id':ObjectId(project_id)},
+                    {
+                        '$set': {
+                            "status": status
+                        }
+                    }
+                )
+        return True
 
 

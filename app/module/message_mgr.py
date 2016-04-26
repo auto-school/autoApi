@@ -17,6 +17,7 @@ def add_message(msg):
 
 def find_message_for_receiver(username):
     messages = mongo_conn.find_all_messages_for_receiver(username)
+    messages = map(get_attachment, messages)
     messages = map(convert_message_bson_type, messages)
     return messages
 
@@ -28,7 +29,11 @@ def expire_message(message_id):
 
 def convert_message_bson_type(message):
     message['created_time'] = time.mktime(message['created_time'].timetuple())
-    if message['type'] == 0:
-        message['attachment'] = application.convert_application_bson_type(message['attachment'])
     message['_id'] = str(message['_id'])
+    return message
+
+
+def get_attachment(message):
+    if message['type'] == 0:
+        message['attachment'] = application.ApplicationManager.find_application_by_id(message['attachment']['project']['id'])
     return message

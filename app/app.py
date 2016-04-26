@@ -9,6 +9,7 @@ from module.token import verify_auth_token, generate_auth_token, set_token_key
 from module.application import ApplicationManager
 from flask_cors import CORS
 
+
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
 CORS(app)
@@ -61,8 +62,9 @@ def create_user():
 @auth.login_required
 def get_projects():
     offset = int(request.args.get('offset', 0))
-    limit = int(request.args.get('limit', 2))
-    projects = ProjectManager().find_all_project(offset=offset, limit=limit)
+    limit = int(request.args.get('limit', 5))
+    status = request.args.get('status', None)
+    projects = ProjectManager().find_all_project(offset=offset, limit=limit, status=status)
     data = {'data': projects}
     raw = json_util.dumps(data, ensure_ascii= False, indent=4)
     resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
@@ -108,6 +110,20 @@ def create_application():
     return jsonify({'result': 'success'})
 
 
+@app.route('/application/<application_id>/approval', methods=['POST'])
+@auth.login_required
+def approve_application(application_id):
+    ApplicationManager.approve_application(application_id)
+    return jsonify({'result': 'success'})
+
+# admin operation
+
+
+@app.route('/admin/project/<project_id>/approval', methods=['POST'])
+@auth.login_required
+def approve_project(project_id):
+    ProjectManager().approve_project(project_id)
+    return jsonify({'result': 'success'})
 
 @app.route('/')
 def index():

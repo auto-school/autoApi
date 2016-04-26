@@ -44,6 +44,10 @@ class ProjectManager:
             return None
         return project
 
+    def approve_project(self, project_id):
+        self._mongo_conn.update_project_status(project_id, status=1)
+        return True
+
     def new_project(self, project):
         result = self._mongo_conn.insert_project(project)
 

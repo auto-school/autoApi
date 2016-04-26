@@ -24,6 +24,16 @@ class ApplicationManager:
         message_mgr.add_message(message)
         return True
 
+    @classmethod
+    def find_application_by_id(self, application_id):
+        application = self.conn.find_application_by_id(application_id)
+        return convert_application_bson_type(application)
+
+    @classmethod
+    def approve_application(self, application_id):
+        self.conn.update_application_status(application_id, status=1)
+        return True
+
 
 def convert_application_bson_type(application):
     application['created_time'] = time.mktime(application['created_time'].timetuple())
