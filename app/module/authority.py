@@ -1,4 +1,5 @@
 from conn import Connection
+from flask import g
 
 
 def valid_login(username, password):
@@ -7,7 +8,9 @@ def valid_login(username, password):
     if user_not_exist(users):
         return False
     if equal_password(users[0], password):
-        return True
+        g.user = convert_user_bson_type(users[0])
+        g.user.pop('password')
+        return users[0]
     return False
 
 
@@ -23,7 +26,8 @@ def signup(username, password):
                                    professional_skill='',
                                    contact='',
                                    practice_experience='',
-                                   edu_experience=''))
+                                   edu_experience='',
+                                   name=''))
     if result:
         return True
     else:
@@ -40,3 +44,6 @@ def user_not_exist(user):
 def equal_password(user, password):
     return user['password'] == password
 
+def convert_user_bson_type(user):
+    user['_id'] = str(user['_id'])
+    return user

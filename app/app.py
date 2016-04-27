@@ -43,8 +43,8 @@ def verify_password(username_or_token, password):
 @app.route('/token', methods=['POST'])
 @auth.login_required
 def get_auth_token():
-    token = generate_auth_token(600)
-    return jsonify({'data':{'token': token.decode('ascii'), 'duration': 600}})
+    token = generate_auth_token(g.user['username'])
+    return jsonify({'data': {'token': token.decode('ascii'),'user': g.user}})
 
 
 # user resource
