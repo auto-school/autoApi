@@ -14,7 +14,7 @@ def valid_login(username, password):
     return False
 
 
-def signup(username, password):
+def signup(username, password, name):
 
     conn = Connection()
 
@@ -27,7 +27,8 @@ def signup(username, password):
                                    contact='',
                                    practice_experience='',
                                    edu_experience='',
-                                   name=''))
+                                   name=name,
+                                   role=0))
     if result:
         return True
     else:

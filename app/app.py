@@ -52,7 +52,7 @@ def get_auth_token():
 @app.route('/user', methods=['POST'])
 def create_user():
     user = request.json
-    result = authority.signup(user['username'], user['password'])
+    result = authority.signup(user['username'], user['password'],user['name'])
     return jsonify({'result': 'success'})
 
 
@@ -124,6 +124,7 @@ def approve_application(application_id):
 def approve_project(project_id):
     ProjectManager().approve_project(project_id)
     return jsonify({'result': 'success'})
+
 
 @app.route('/')
 def index():
