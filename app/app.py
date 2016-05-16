@@ -126,6 +126,16 @@ def approve_project(project_id):
     return jsonify({'result': 'success'})
 
 
+@app.route('/admin/token', methods=['POST'])
+@auth.login_required
+def admin_login():
+    if g.user['role'] != 1:
+        abort(403)
+    else:
+        token = generate_auth_token(g.user['username'])
+        return jsonify({'data': {'token': token.decode('ascii'), 'user': g.user}})
+
+
 @app.route('/')
 def index():
     return 'nothing happen !'
