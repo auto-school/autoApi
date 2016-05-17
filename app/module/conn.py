@@ -23,7 +23,8 @@ class Connection:
         return True
 
     def find_all_project(self, **keyword):
-        query = {}
+        query = dict()
+        query['status'] = {'$ne': 0}
         status = keyword.get('status', None)
         if status:
             query['status'] = int(status)

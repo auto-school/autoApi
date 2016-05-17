@@ -44,7 +44,7 @@ def verify_password(username_or_token, password):
 @auth.login_required
 def get_auth_token():
     token = generate_auth_token(g.user['username'])
-    return jsonify({'data': {'token': token.decode('ascii'),'user': g.user}})
+    return jsonify({'data': {'token': token.decode('ascii'),'user': g.user}, 'code':400})
 
 
 # user resource
@@ -133,7 +133,7 @@ def admin_login():
         abort(403)
     else:
         token = generate_auth_token(g.user['username'])
-        return jsonify({'data': {'token': token.decode('ascii'), 'user': g.user}})
+        return jsonify({'data': {'token': token.decode('ascii'), 'user': g.user}, 'code': 400})
 
 
 @app.route('/')
