@@ -42,7 +42,7 @@ class ProjectManager:
         project = self._mongo_conn.find_project_by_id(project_id)
         if project is None:
             return None
-        return project
+        return convert_project_bson_type(project)
 
     def approve_project(self, project_id):
         self._mongo_conn.update_project_status(project_id, status=1)

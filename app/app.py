@@ -79,6 +79,17 @@ def new_project():
     return '213'
 
 
+@app.route('/project/<project_id>', methods=['GET'])
+@auth.login_required
+def find_project_by_id(project_id):
+    project = ProjectManager().find_project_by_id(project_id)
+    data = {'data': project}
+    raw = json_util.dumps(data, ensure_ascii=False, indent=4)
+    resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
+    return resp
+
+
+
 @app.route('/user/<username>/projects', methods=['GET'])
 @auth.login_required
 def get_projects_of_user(username):
