@@ -59,7 +59,7 @@ def get_auth_token():
 def create_user():
     user = request.json
     result = authority.signup(user['username'], user['password'],user['name'])
-    return jsonify({'result': 'success'})
+    return jsonify({'result': 'success', 'code': 323})
 
 
 # projects resource
