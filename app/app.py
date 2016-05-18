@@ -3,7 +3,8 @@ from flask import Flask, render_template, request, session, redirect, url_for, j
 from module import authority, project, form
 from bson import json_util
 from module.project import ProjectManager
-from module import message_mgr
+from module.message_mgr import MessageManager
+from module.conn import Connection
 from flask_httpauth import HTTPBasicAuth
 from module.token import verify_auth_token, generate_auth_token, set_token_key
 from module.application import ApplicationManager
@@ -21,6 +22,10 @@ auth = HTTPBasicAuth()
 
 # module init
 
+
+#db init
+
+
 # token module
 set_token_key(app.secret_key)
 
@@ -28,13 +33,14 @@ set_token_key(app.secret_key)
 @auth.verify_password
 def verify_password(username_or_token, password):
     # first try to authenticate by token
-    optional_id = verify_auth_token(username_or_token)
-    if not optional_id:
+    user = verify_auth_token(username_or_token)
+    if not user:
         # try to authenticate with username/password
         if authority.valid_login(username_or_token, password):
             return True
         else:
             return False
+    g.user = user
     return True
 
 # token resource
@@ -43,7 +49,7 @@ def verify_password(username_or_token, password):
 @app.route('/token', methods=['POST'])
 @auth.login_required
 def get_auth_token():
-    token = generate_auth_token(g.user['username'])
+    token = generate_auth_token(g.user)
     return jsonify({'data': {'token': token.decode('ascii'),'user': g.user}, 'code':400})
 
 
@@ -89,7 +95,6 @@ def find_project_by_id(project_id):
     return resp
 
 
-
 @app.route('/user/<username>/projects', methods=['GET'])
 @auth.login_required
 def get_projects_of_user(username):
@@ -104,7 +109,7 @@ def get_projects_of_user(username):
 @app.route('/user/<username>/messages', methods=['GET'])
 @auth.login_required
 def get_message_of_username(username):
-    messages = message_mgr.find_message_for_receiver(username)
+    messages = MessageManager().find_message_for_receiver(username)
     data = {'data': messages}
     raw = json_util.dumps(data, ensure_ascii= False, indent=4)
     resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
@@ -117,14 +122,14 @@ def get_message_of_username(username):
 @auth.login_required
 def create_application():
     application = request.json
-    result = ApplicationManager.insert_application(application)
-    return jsonify({'result': 'success'})
+    result = ApplicationManager().insert_application(application)
+    return jsonify({'result': 'success','code': 322})
 
 
 @app.route('/application/<application_id>/approval', methods=['POST'])
 @auth.login_required
 def approve_application(application_id):
-    ApplicationManager.approve_application(application_id)
+    ApplicationManager().approve_application(application_id)
     return jsonify({'result': 'success'})
 
 # admin operation

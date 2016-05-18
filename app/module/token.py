@@ -13,9 +13,9 @@ def set_token_key(key):
     Token.secret_key = key
 
 
-def generate_auth_token(uid, expiration=600):
+def generate_auth_token(user, expiration=600):
     s = Serializer(Token.secret_key, expires_in=expiration)
-    return s.dumps({'id': uid})
+    return s.dumps(user)
 
 
 def verify_auth_token(token):
@@ -26,4 +26,4 @@ def verify_auth_token(token):
         return None    # valid token, but expired
     except BadSignature:
         return None    # invalid token
-    return data['id']
+    return data

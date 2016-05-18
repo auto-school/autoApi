@@ -1,8 +1,9 @@
 # coding=utf-8
 
-from conn import Connection
 from datetime import datetime
+from flask import g
 import time
+from pydb import get_db
 
 
 def cal_member(team):
@@ -15,12 +16,15 @@ def cal_member(team):
 class ProjectManager:
 
     def __init__(self):
-        self._mongo_conn = Connection()
+        self._mongo_conn = get_db()
 
     def create_project(self, project):
         project['status'] = 0
         project['deadline'] = datetime.fromtimestamp(project['deadline'])
         project['created_time'] = datetime.now()
+        project['team']['member'] = []
+        project['team']['mentor'] = []
+        project['team']['outside_mentor'] = []
         result = self._mongo_conn.insert_project(project)
         return result
 

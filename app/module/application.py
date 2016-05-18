@@ -1,37 +1,39 @@
-from conn import Connection
 from datetime import datetime
-import message_mgr
 import time
+from pydb import get_db
+from project import ProjectManager
+from flask import g
 
 
 class ApplicationManager:
-    conn = Connection()
 
     def __init__(self):
-        pass
+        self._mongo_conn = get_db()
 
-    @classmethod
-    def insert_application(cls, application):
+    def insert_application(self, application):
         application['created_time'] = datetime.now()
-        result = cls.conn.insert_application(application)
+        applier = dict(username=g.user['username'], name=g.user['name'])
+        application['applier'] = applier
+        application['status'] = 0
+        apply_project = ProjectManager().find_project_by_id(application['project']['id'])
+        application['project']['name'] = apply_project['name']
+        result = self._mongo_conn.insert_application(application)
         message = dict()
         message['created_time'] = datetime.now()
-        message['receiver'] = application['project']['creator']
-        message['sender'] = application['applier']
+        message['receiver'] = apply_project['creator']['id']
+        message['sender'] = dict(username=application['applier']['username'], name=application['applier']['name'])
         message['type'] = 0
-        project = dict(id=str(result.inserted_id))
-        message['attachment'] = dict(project=project)
-        message_mgr.add_message(message)
+        message['status'] = 0
+        message['attachment'] = dict(application=str(result.inserted_id))
+        self._mongo_conn.insert_msg(message)
         return True
 
-    @classmethod
     def find_application_by_id(self, application_id):
-        application = self.conn.find_application_by_id(application_id)
+        application = self._mongo_conn.find_application_by_id(application_id)
         return convert_application_bson_type(application)
 
-    @classmethod
     def approve_application(self, application_id):
-        self.conn.update_application_status(application_id, status=1)
+        self._mongo_conn.update_application_status(application_id, status=1)
         return True
 
 

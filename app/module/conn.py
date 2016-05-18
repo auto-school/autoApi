@@ -70,11 +70,7 @@ class Connection:
         return True
 
     def find_all_messages_for_receiver(self, username):
-        msgs_cursor = self.conn.messages.find({'receiver.id': username})
-        msgs = []
-        for msg in msgs_cursor:
-            msgs.append(msg)
-        return msgs
+        return list(self.conn.messages.find({'receiver': username}))
 
     def update_message_status(self, message_id, status):
 
