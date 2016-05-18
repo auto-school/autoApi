@@ -25,6 +25,7 @@ class ProjectManager:
         project['team']['member'] = []
         project['team']['mentor'] = []
         project['team']['outside_mentor'] = []
+        project['creator'] = dict(id=g.user['username'], name=g.user['name'])
         result = self._mongo_conn.insert_project(project)
         return result
 
