@@ -22,10 +22,13 @@ class ProjectManager:
         project['status'] = 0
         project['deadline'] = datetime.fromtimestamp(project['deadline'])
         project['created_time'] = datetime.now()
+        project['team'] = dict()
+        project['team']['charge_person'] = dict(id=g.user['username'], name=g.user['name'])
         project['team']['member'] = []
         project['team']['mentor'] = []
         project['team']['outside_mentor'] = []
         project['creator'] = dict(id=g.user['username'], name=g.user['name'])
+
         result = self._mongo_conn.insert_project(project)
         return result
 
