@@ -4,7 +4,7 @@ from conn import Connection
 
 
 def connect_db():
-    db = Connection()
+    db = Connection().conn
     return db
 
 

@@ -12,7 +12,7 @@ from bson.objectid import ObjectId
 
 class MessageManager():
     def __init__(self):
-        self.conn = get_db().conn
+        self.conn = get_db()
 
     def add_message(self, msg):
         self.conn.messages.insert_one(msg)

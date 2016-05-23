@@ -7,6 +7,10 @@ from flask import g
 
 from db.pydb import get_db
 
+import pymongo
+
+from bson.objectid import ObjectId
+
 
 def cal_member(team):
     current_person = 0
@@ -18,7 +22,7 @@ def cal_member(team):
 class ProjectManager:
 
     def __init__(self):
-        self._mongo_conn = get_db()
+        self.conn = get_db()
 
     def create_project(self, project):
         project['status'] = 0
@@ -32,35 +36,64 @@ class ProjectManager:
         project['appliers'] = []
         project['creator'] = dict(id=g.user['username'], name=g.user['name'])
 
-        result = self._mongo_conn.insert_project(project)
+        result = self.conn.projects.insert_one(project)
         return result
 
     def find_all_project(self, **keyword):
-        projects = self._mongo_conn.find_all_project(**keyword)
+        query = dict()
+        status = keyword.get('status', None)
+        if status:
+            query['status'] = int(status)
+        else:
+            query['$and'] = [{'status': {'$ne': 2}}, {'status': {'$ne': 0}}]
+        projects = list(self.conn.projects.find(query)
+                    .skip(keyword['offset'])
+                    .limit(keyword['limit'])
+                    .sort([('created_time', pymongo.DESCENDING), ]))
         projects = map(convert_project_bson_type,projects)
         return projects
 
-    def add_member(self, join_info):
-        result = self._mongo_conn.update_member(join_info)
-        return result
-
     def find_all_project_by_username(self, username):
-        projects = self._mongo_conn.find_all_project_by_username(username)
+        projects = list(self.conn.projects.find({'creator.id': username}))
         projects = map(convert_project_bson_type,projects)
         return projects
 
     def find_project_by_id(self, project_id):
-        project = self._mongo_conn.find_project_by_id(project_id)
-        if project is None:
-            return None
+        project = self.conn.projects.find_one({'_id':ObjectId(project_id)})
         return convert_project_bson_type(project)
 
     def approve_project(self, project_id):
-        self._mongo_conn.update_project_status(project_id, status=1)
+        self.conn.projects.update_one(
+            {'_id': ObjectId(project_id)},
+            {
+                '$set': {
+                    "status": 1
+                }
+            }
+        )
         return True
 
-    def new_project(self, project):
-        result = self._mongo_conn.insert_project(project)
+    def reject_project(self, project_id):
+        self.conn.projects.update_one(
+            {'_id': ObjectId(project_id)},
+            {
+                '$set': {
+                    "status": 2
+                }
+            }
+        )
+        return True
+
+    def close_project(self, project_id):
+        self.conn.projects.update_one(
+            {'_id': ObjectId(project_id)},
+            {
+                '$set': {
+                    "status": 3
+                }
+            }
+        )
+        return True
 
 
 def convert_project_bson_type(project):

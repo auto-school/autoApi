@@ -10,7 +10,7 @@ from bson.objectid import ObjectId
 class ApplicationManager:
 
     def __init__(self):
-        self.conn = get_db().conn
+        self.conn = get_db()
 
     def insert_application(self, application):
         application['created_time'] = datetime.now()

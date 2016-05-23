@@ -9,6 +9,8 @@ from module.application import ApplicationManager
 from module.message_mgr import MessageManager
 from module.project import ProjectManager
 from module.token import verify_auth_token, generate_auth_token, set_token_key
+import os
+
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
@@ -21,9 +23,7 @@ auth = HTTPBasicAuth()
 
 # module init
 
-
-#db init
-
+# db init
 
 # token module
 set_token_key(app.secret_key)
@@ -94,6 +94,13 @@ def find_project_by_id(project_id):
     return resp
 
 
+@app.route('/project/<project_id>/closing', methods=['POST'])
+@auth.login_required
+def close_project(project_id):
+    project = ProjectManager().close_project(project_id)
+    return {"result": "success"}
+
+
 @app.route('/user/<username>/projects', methods=['GET'])
 @auth.login_required
 def get_projects_of_user(username):
@@ -158,6 +165,13 @@ def approve_project(project_id):
     return jsonify({'result': 'success'})
 
 
+@app.route('/admin/project/<project_id>/rejection', methods=['POST'])
+@auth.login_required
+def reject_project(project_id):
+    ProjectManager().reject_project(project_id)
+    return jsonify({'result': 'success'})
+
+
 @app.route('/admin/token', methods=['POST'])
 @auth.login_required
 def admin_login():
@@ -166,6 +180,13 @@ def admin_login():
     else:
         token = generate_auth_token(g.user['username'])
         return jsonify({'data': {'token': token.decode('ascii'), 'user': g.user}, 'code': 400})
+
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    f = request.files['the_file']
+    f.save(os.path.join(os.path.dirname(__file__), 'static', 'file', f.filename))
+    return 'ok'
 
 
 @app.route('/')

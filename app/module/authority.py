@@ -46,6 +46,7 @@ def user_not_exist(user):
 def equal_password(user, password):
     return user['password'] == password
 
+
 def convert_user_bson_type(user):
     user['_id'] = str(user['_id'])
     return user
