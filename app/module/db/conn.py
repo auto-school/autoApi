@@ -14,9 +14,6 @@ class Connection:
         self.conn.users.insert_one(user)
         return True
 
-    def find_user_by_username(self, username):
-        results = list(self.conn.users.find({'username': username}))
-        return results
 
 
 

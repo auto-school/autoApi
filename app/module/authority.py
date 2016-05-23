@@ -1,28 +1,27 @@
 from flask import g
 
 from db.conn import Connection
+from db.pydb import get_db
 
 
 def valid_login(username, password):
-    conn = Connection()
-    users = conn.find_user_by_username(username)
-    if user_not_exist(users):
+    conn = get_db()
+    user = conn.users.find_one({'username': username})
+    if user is None:
         return False
-    if equal_password(users[0], password):
-        g.user = convert_user_bson_type(users[0])
+    if user['password'] == password:
+        g.user = convert_user_bson_type(user)
         g.user.pop('password')
-        return users[0]
+        return user
     return False
 
 
 def signup(username, password, name):
-
-    conn = Connection()
-
-    user = conn.find_user_by_username(username)
-    if not user_not_exist(user):
+    conn = get_db()
+    user = conn.users.find_one({'username': username})
+    if user:
         return False
-    result = conn.insert_user(dict(username=username,
+    conn.users.insert_one(dict(username=username,
                                    password=password,
                                    professional_skill='',
                                    contact='',
@@ -30,21 +29,7 @@ def signup(username, password, name):
                                    edu_experience='',
                                    name=name,
                                    role=0))
-    if result:
-        return True
-    else:
-        return False
-
-
-def user_not_exist(user):
-    if len(user) == 0:
-        return True
-    else:
-        return False
-
-
-def equal_password(user, password):
-    return user['password'] == password
+    return True
 
 
 def convert_user_bson_type(user):
