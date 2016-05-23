@@ -1,15 +1,14 @@
 # coding: utf-8
-from flask import Flask, render_template, request, session, redirect, url_for, jsonify, Response, g, abort
-from module import authority, project, form
 from bson import json_util
-from module.project import ProjectManager
-from module.message_mgr import MessageManager
-from module.conn import Connection
-from flask_httpauth import HTTPBasicAuth
-from module.token import verify_auth_token, generate_auth_token, set_token_key
-from module.application import ApplicationManager
+from flask import Flask, request, jsonify, Response, g, abort
 from flask_cors import CORS
+from flask_httpauth import HTTPBasicAuth
 
+from module import authority
+from module.application import ApplicationManager
+from module.message_mgr import MessageManager
+from module.project import ProjectManager
+from module.token import verify_auth_token, generate_auth_token, set_token_key
 
 app = Flask(__name__)
 app.secret_key = 'A0Zr98j/3yX R~XHH!jmN]LWX/,?RT'
@@ -116,7 +115,17 @@ def get_message_of_username(username):
     return resp
 
 
+@app.route('/message/<message_id>', methods=['GET'])
+@auth.login_required
+def get_message_by_id(message_id):
+    msg = MessageManager().find_message_by_id(message_id)
+    data = {'data': msg}
+    raw = json_util.dumps(data, ensure_ascii=False, indent=4)
+    resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
+    return resp
+
 # application
+
 
 @app.route('/application', methods=['POST'])
 @auth.login_required
@@ -130,6 +139,13 @@ def create_application():
 @auth.login_required
 def approve_application(application_id):
     ApplicationManager().approve_application(application_id)
+    return jsonify({'result': 'success'})
+
+
+@app.route('/application/<application_id>/rejection', methods=['POST'])
+@auth.login_required
+def reject_application(application_id):
+    ApplicationManager().reject_application(application_id)
     return jsonify({'result': 'success'})
 
 # admin operation

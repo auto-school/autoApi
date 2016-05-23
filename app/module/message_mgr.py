@@ -1,7 +1,9 @@
-from datetime import datetime
 import time
+
+from db.pydb import get_db
 from application import ApplicationManager
-from pydb import get_db
+from bson.objectid import ObjectId
+
 
 # about message status
 # 0 => active
@@ -10,21 +12,35 @@ from pydb import get_db
 
 class MessageManager():
     def __init__(self):
-        self._mongo_conn = get_db()
+        self.conn = get_db().conn
 
     def add_message(self, msg):
-        self._mongo_conn.insert_msg(msg)
+        self.conn.messages.insert_one(msg)
         return True
 
     def find_message_for_receiver(self, username):
-        messages = self._mongo_conn.find_all_messages_for_receiver(username)
+        messages = list(self.conn.messages.find({'receiver': username}))
         messages = map(get_attachment, messages)
         messages = map(convert_message_bson_type, messages)
         return messages
 
+    def find_message_by_id(self, mid):
+        msg = self.conn.messages.find_one({'_id':ObjectId(mid)})
+        msg = get_attachment(msg)
+        msg = convert_message_bson_type(msg)
+        return msg
+
     def expire_message(self, message_id):
-        result = self._mongo_conn.update_message_status(message_id, status=1)
-        return result
+        self.conn.messages.update_one(
+            {'_id': ObjectId(message_id)},
+            {
+                '$set': {
+                    "status": 1
+                }
+            }
+
+        )
+        return True
 
 
 def convert_message_bson_type(message):

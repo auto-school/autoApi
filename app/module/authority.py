@@ -1,5 +1,6 @@
-from conn import Connection
 from flask import g
+
+from db.conn import Connection
 
 
 def valid_login(username, password):

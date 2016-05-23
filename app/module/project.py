@@ -1,9 +1,11 @@
 # coding=utf-8
 
-from datetime import datetime
-from flask import g
 import time
-from pydb import get_db
+from datetime import datetime
+
+from flask import g
+
+from db.pydb import get_db
 
 
 def cal_member(team):
@@ -27,6 +29,7 @@ class ProjectManager:
         project['team']['member'] = []
         project['team']['mentor'] = []
         project['team']['outside_mentor'] = []
+        project['appliers'] = []
         project['creator'] = dict(id=g.user['username'], name=g.user['name'])
 
         result = self._mongo_conn.insert_project(project)

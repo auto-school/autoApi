@@ -34,7 +34,6 @@ class Connection:
                     .sort([('created_time', pymongo.DESCENDING),]))
 
     def update_member(self, join_info):
-
         result = self.conn.projects.update_one(
                     {'_id':ObjectId(join_info['project-id'])},
                     {
@@ -45,7 +44,6 @@ class Connection:
                             }
                         }
                     }
-
                 )
         return True
 
@@ -90,7 +88,7 @@ class Connection:
         return _id
 
     def find_application_by_id(self, application_id):
-        return list(self.conn.application.find({'_id': ObjectId(application_id)}))[0]
+        return self.conn.application.find_one({'_id': ObjectId(application_id)})
 
     def update_application_status(self, application_id, status):
         self.conn.application.update_one(
