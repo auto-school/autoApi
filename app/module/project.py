@@ -95,6 +95,19 @@ class ProjectManager:
         )
         return True
 
+    def find_projects_for_owner(self, username):
+        return list(self.conn.projects.find({'team.charge_person.id':username}))
+
+    def find_projects_for_participant(self, username):
+
+        return list(self.conn.projects.find({
+            '$or': [
+                {'team.member.username': username},
+                {'team.mentor.username': username},
+                {'team.outside_mentor.username': username}
+            ]
+        }))
+
 
 def convert_project_bson_type(project):
     project['created_time'] = time.mktime(project['created_time'].timetuple())

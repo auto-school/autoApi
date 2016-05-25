@@ -18,7 +18,7 @@ class MessageManager():
         self.conn.messages.insert_one(msg)
         return True
 
-    def find_message_for_receiver(self, username):
+    def find_messages_for_receiver(self, username):
         messages = list(self.conn.messages.find({'receiver': username}))
         messages = map(get_attachment, messages)
         messages = map(convert_message_bson_type, messages)

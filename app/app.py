@@ -114,9 +114,29 @@ def get_projects_of_user(username):
 
 @app.route('/user/<username>/messages', methods=['GET'])
 @auth.login_required
-def get_message_of_username(username):
-    messages = MessageManager().find_message_for_receiver(username)
+def get_messages_of_username(username):
+    messages = MessageManager().find_messages_for_receiver(username)
     data = {'data': messages}
+    raw = json_util.dumps(data, ensure_ascii= False, indent=4)
+    resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
+    return resp
+
+
+@app.route('/user/<username>/projects', methods=['GET'])
+@auth.login_required
+def get_projects_of_username(username):
+    projects = ProjectManager().find_projects_for_owner(username)
+    data = {'data': projects}
+    raw = json_util.dumps(data, ensure_ascii= False, indent=4)
+    resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
+    return resp
+
+
+@app.route('/user/<username>/participant/projects', methods=['GET'])
+@auth.login_required
+def get_join_projects_of_username(username):
+    projects = ProjectManager().find_projects_for_participant(username)
+    data = {'data': projects}
     raw = json_util.dumps(data, ensure_ascii= False, indent=4)
     resp = Response(response=raw, status=200, content_type='application/json; charset=utf-8')
     return resp
