@@ -50,7 +50,7 @@ def convert_message_bson_type(message):
 
 
 def get_attachment(message):
-    if message['type'] == 0:
+    if message['type'] == 0 or message['type'] == 1 or message['type'] == 2:
         message['attachment']['application'] = ApplicationManager().find_application_by_id(
             message['attachment']['application'])
     return message
